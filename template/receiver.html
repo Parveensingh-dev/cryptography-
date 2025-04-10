@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receiver Chat</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">📩 Receiver Chat</div>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-container">
+            <input type="text" id="replyInput" placeholder="Type a reply...">
+            <button onclick="sendReply()">Send Reply</button>
+        </div>
+    </div>
+
+    <script>
+        var socket = io.connect("http://127.0.0.1:5000");
+
+        function sendReply() {
+            var message = document.getElementById("replyInput").value;
+            socket.emit("message", { user: "Receiver", message: message });
+            document.getElementById("replyInput").value = "";
+        }
+
+        socket.on("message", function(data) {
+            var chatBox = document.getElementById("chat-box");
+            var newMessage = document.createElement("div");
+            newMessage.classList.add("message", data.user === "Receiver" ? "sender" : "receiver");
+            newMessage.innerHTML = `<strong>${data.user}:</strong> ${data.message}`;
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            aligh=right;
+        });
+    </script>
+</body>
+</html>
